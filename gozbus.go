@@ -2,7 +2,7 @@
 // license: MIT or Apache2, your choice.
 //
 // gozbus: a messaging system in golang.
-//         As a European might say, "Catch Z Bus!"
+//         Hey hey hey, "Catch Z Bus!"
 //
 // Gozbus is based on the nanocap transport, our term
 // for a combination of the nanomsg[1] and Cap'n Proto[2]
