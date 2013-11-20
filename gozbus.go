@@ -1,10 +1,22 @@
-// copyright(c) 2013, the gobus authors.
+// copyright(c) 2013, the gozbus authors.
 // license: MIT or Apache2, your choice.
-// gobus: a nanocap based messaging system in golang
 //
+// gozbus: a messaging system in golang.
+//         As a Europeans might say, "Catch Z Bus!"
+//
+// Gozbus is based on the nanocap transport, our term
+// for a combination of the nanomsg[1] and Cap'n Proto[2]
+// technologies.
+//
+// [1] nanomsg: http://nanomsg.org/
+// [2] Cap'n Protoc: http://kentonv.github.io/capnproto/
 
+//
+// build notes:
 // to debug with gdb, build like so:
 //    go build -gcflags "-N -l" gobus.go
+//  this turns of inlining and registerization, so
+//  you can inspect local variables easier.
 
 package main
 
@@ -74,6 +86,9 @@ func sendZDate(nnzbus *nn.Socket) {
 	s.WriteTo(&buf)
 
 	nnzbus.Send(buf.Bytes(), 0)
+
+	fmt.Printf("[pid %d] sendZDate sent ZDate message: year %d, month %d, day %d\n", 
+		os.Getpid(), d.Year(), d.Month(), d.Day())
 }
 
 func recvZDate(nnzbus *nn.Socket) {
@@ -110,6 +125,7 @@ func main() {
 		// server code, binds the bus to start it.
 		startZBus(nnzbus)
 		recvMsgOnZBus(nnzbus)
+		sendZDate(nnzbus)
 
 	} else {
 		// client code, connects to the bus.
@@ -118,6 +134,7 @@ func main() {
 		}
 
 		sayHello(nnzbus)
+		recvZDate(nnzbus)
 	}
 
 	// wait 2 minutes
