@@ -29,6 +29,7 @@ func TestBadEndpointMeansServerEndpointTestShouldFail(t *testing.T) {
 	cv.ShouldPanic(func() { panic("test the goconvey ShouldPanic function") })
     cv.ShouldPanic(func() { ServerBindHelper(t, "tcp://127.0.0.1:1776", "tcp://127.0.0.1:1779")})	 
     cv.ShouldPanic(func() { ServerBindHelper(t, "tcp://127.0.0.1:1777", "tcp://127.0.0.1:1778")})
+    cv.ShouldNotPanic(func() { ServerBindHelper(t, "tcp://127.0.0.1:1779", "tcp://127.0.0.1:1779")})
 }
 
 
