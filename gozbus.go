@@ -27,10 +27,11 @@ func startBus(nnbus *nn.Socket) {
 	if err != nil {
 		fmt.Printf("bus already started?; proceeding.\n")
 	}
-	fmt.Printf("busclient: startBus bound endpoint '%s'.\n", BUS_ADDR)
+	fmt.Printf("[pid %d] gozbus server: startBus bound endpoint '%s'.\n", os.Getpid(), BUS_ADDR)
 }
 
 func recvMsgOnBus(nnbus *nn.Socket) {
+	pid := os.Getpid()
 	
 	// receive, synchronously so flags == 0
 	var flags int = 0
@@ -39,21 +40,22 @@ func recvMsgOnBus(nnbus *nn.Socket) {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("I heard: '%s'.\n", heardBuf)
+	fmt.Printf("[pid %d] gozbus server: I heard: '%s'.\n", pid, heardBuf)
 }
 
 func sayHello(nnbus *nn.Socket) {
-	whoami := os.Getpid()
-	msg    := "hello from pid " + strconv.Itoa(whoami)
+	pid := os.Getpid()
+	msg    := "hello from pid " + strconv.Itoa(pid)
 	
 	nnbus.Send([]byte(msg), 0)
-	fmt.Printf("busclient: sayHello sent msg '%s'.\n", msg)
+	fmt.Printf("[pid %d] gozbus client: sayHello sent msg '%s'.\n", pid, msg)
 }
 
 
 func main() {
 	var err error
 	var nnbus *nn.Socket
+	pid := os.Getpid()
 
 	nnbus, err = nn.NewSocket(nn.AF_SP, nn.PAIR)
 	if err != nil { log.Fatal(err) }
@@ -78,5 +80,5 @@ func main() {
 	}
 
 	// wait 2 minutes
-	fmt.Printf("done.\n")
+	fmt.Printf("[pid %d] done.\n", pid)
 }
