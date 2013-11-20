@@ -17,6 +17,9 @@ import (
 	nn "github.com/op/go-nanomsg"
 	"github.com/glycerine/gozbus/zbus"
 	capn "github.com/jmckaskill/go-capnproto"
+
+	// for parsing command line options:
+	// https://github.com/spf13/cobra
 )
 
 const ZBUS_ADDR = "tcp://127.0.0.1:1776"
