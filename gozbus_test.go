@@ -1,11 +1,9 @@
 package main
 
 import (
-	//"os"
 	"testing"
 	nn "github.com/op/go-nanomsg"
     "os/exec"
-	//"regexp"
 	"strings"
 	cv "github.com/smartystreets/goconvey/convey"
 )
@@ -21,34 +19,37 @@ func TestDemo(t *testing.T) {
 
 // starting server should bind the supplied endpoint
 func TestServerBinds(t *testing.T) {
-	ServerBindHelper(t, ZBUS_ADDR)
+	ServerBindHelper(t, ZBUS_ADDR, ZBUS_ADDR)
 }
 
 // and the netstat validation should fail if we
 // give the wrong endpoint:
 
-func badEndpointMeansServerEndpointTestShouldFail(t *testing.T) {
-    ServerBindHelper(t, "tcp://127.0.0.1:99992423423")
+func TestBadEndpointMeansServerEndpointTestShouldFail(t *testing.T) {
+	cv.ShouldPanic(func() { panic("test the goconvey ShouldPanic function") })
+    cv.ShouldPanic(func() { ServerBindHelper(t, "tcp://127.0.0.1:1776", "tcp://127.0.0.1:1779")})	 
+    cv.ShouldPanic(func() { ServerBindHelper(t, "tcp://127.0.0.1:1777", "tcp://127.0.0.1:1778")})
 }
 
 
 // make addr separate from ZBUS_ADDR, so we
 // can validate that the test detects a problem
 // when they are different.
-func ServerBindHelper(t *testing.T, addr string) {
+func ServerBindHelper(t *testing.T, addr_use string, addr_expect string) {
 	nnzbus, err := nn.NewSocket(nn.AF_SP, nn.PAIR)
 	if err != nil { t.Fatal(err) }
-	
-	startZBus(nnzbus, addr)
+	defer nnzbus.Close()
+
+	startZBus(nnzbus, addr_use)
+
 	// To test the test, for example, expect failure if we gave a wrong address here:
     // startZBus(nnzbus, "tcp://127.0.0.1:1777")
 	
 	out, err := exec.Command("netstat", "-nuptl").Output()
 	if err != nil { t.Fatal(err) }
 	
-	lines := strings.Split(string(out), "\n")
-	
-	needle := strings.SplitAfter(ZBUS_ADDR, "//")[1]
+	lines := strings.Split(string(out), "\n")	
+	needle := strings.SplitAfter(addr_expect, "//")[1]
 	//e.g.	needle := "127.0.0.1:1776"
 	
 	t.Logf("using netstat -nuptl to look for %v LISTEN line.\n", needle)
@@ -63,8 +64,10 @@ func ServerBindHelper(t *testing.T, addr string) {
 		}
 	}
 
-	if !found { t.Fatal("gozbus server was not",
-		"listening on", ZBUS_ADDR, "as expected.") }
+	if !found { 
+		t.Logf("gozbus server was not listening on %v as expected", addr_expect) 
+		panic("no gozbus server at expected endpoint")
+	}
 }
 
 // client should be able to send to live server

@@ -26,9 +26,10 @@ func startZBus(nnzbus *nn.Socket, addr string) {
 
     _, err := nnzbus.Bind(addr)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("could not bind addr '%s': %v", addr, err)
+		panic(err)
 	}
-	fmt.Printf("[pid %d] gozbus server: startZbus bound endpoint '%s'.\n", os.Getpid(), ZBUS_ADDR)
+	fmt.Printf("[pid %d] gozbus server: startZbus bound endpoint '%s'.\n", os.Getpid(), addr)
 }
 
 func recvMsgOnZBus(nnzbus *nn.Socket) {
@@ -102,6 +103,7 @@ func main() {
 
 	nnzbus, err = nn.NewSocket(nn.AF_SP, nn.PAIR)
 	if err != nil { log.Fatal(err) }
+	defer nnzbus.Close()
 
 	var isServer bool = false
 	if len(os.Args) > 1 && os.Args[1] == "--server" {
