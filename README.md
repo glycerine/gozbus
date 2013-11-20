@@ -17,7 +17,7 @@ for a combination of the nanomsg[1] and Cap'n Proto[2]
 technologies.
 
 [1] nanomsg: http://nanomsg.org/
-[2] Cap'n Protoc: http://kentonv.github.io/capnproto/
+[2] Cap'n Proto: http://kentonv.github.io/capnproto/
 
 
 build notes
