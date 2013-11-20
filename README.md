@@ -1,7 +1,7 @@
 gozbus
 ======
 
-nanocap base messaging system
+nanocap based messaging system
 
 to install:
 
