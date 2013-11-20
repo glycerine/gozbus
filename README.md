@@ -38,7 +38,7 @@ build notes
 
 to debug with gdb, build like so:
 
-    go build -gcflags "-N -l" gobus.go
+    go build -gcflags "-N -l" gozbus.go
 
 this turns off inlining and registerization, so
 you can inspect local variables easier.
