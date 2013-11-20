@@ -27,5 +27,5 @@ to debug with gdb, build like so:
 
     go build -gcflags "-N -l" gobus.go
 
-this turns of inlining and registerization, so
+this turns off inlining and registerization, so
 you can inspect local variables easier.
