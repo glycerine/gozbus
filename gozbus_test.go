@@ -21,6 +21,8 @@ func TestServerbinds(t *testing.T) {
 	if err != nil { t.Fatal(err) }
 
 	startZBus(nnzbus, ZBUS_ADDR)
+	// To test the test, for example, expect failure if we gave a wrong address here:
+    // startZBus(nnzbus, "tcp://127.0.0.1:1777")
 
 	out, err := exec.Command("netstat", "-nuptl").Output()
 	if err != nil { t.Fatal(err) }
@@ -37,11 +39,12 @@ func TestServerbinds(t *testing.T) {
 		if strings.Contains(haystack, needle) && 
 			strings.Contains(haystack, "LISTEN") { 
 			found = true 
+			break
 		}
 	}
 
-	// race condition? might have to try again.
-	if !found { t.Fatal("gozbus server was not listening on %v", ZBUS_ADDR) }
+	if !found { t.Fatal("gozbus server was not",
+		"listening on", ZBUS_ADDR, "as expected.") }
 }
 
 // client should be able to send to live server
