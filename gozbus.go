@@ -1,5 +1,5 @@
 // copyright(c) 2013, the gozbus authors.
-// license: MIT or Apache2, your choice.
+// license: MIT
 //
 // gozbus: a messaging system in golang.
 //         Hey hey hey, "Catch Z Bus!"
