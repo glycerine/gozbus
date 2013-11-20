@@ -9,33 +9,35 @@
 package main
 
 import (
-	//"bytes"
+	"bytes"
 	"fmt"
-	nn "github.com/op/go-nanomsg"
 	"log"
 	"os"
 	"strconv"
 	//"time"
+	nn "github.com/op/go-nanomsg"
+	"github.com/glycerine/gozbus/zbus"
+	capn "github.com/jmckaskill/go-capnproto"
 )
 
-const BUS_ADDR = "tcp://127.0.0.1:1776"
+const ZBUS_ADDR = "tcp://127.0.0.1:1776"
 
 
-func startBus(nnbus *nn.Socket) {
+func startZBus(nnzbus *nn.Socket) {
 
-    _, err := nnbus.Bind(BUS_ADDR)
+    _, err := nnzbus.Bind(ZBUS_ADDR)
 	if err != nil {
-		fmt.Printf("bus already started?; proceeding.\n")
+		fmt.Printf("zbus already started?; proceeding.\n")
 	}
-	fmt.Printf("[pid %d] gozbus server: startBus bound endpoint '%s'.\n", os.Getpid(), BUS_ADDR)
+	fmt.Printf("[pid %d] gozbus server: startZbus bound endpoint '%s'.\n", os.Getpid(), ZBUS_ADDR)
 }
 
-func recvMsgOnBus(nnbus *nn.Socket) {
+func recvMsgOnZBus(nnzbus *nn.Socket) {
 	pid := os.Getpid()
 	
 	// receive, synchronously so flags == 0
 	var flags int = 0
-	heardBuf, err := nnbus.Recv(flags)
+	heardBuf, err := nnzbus.Recv(flags)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,21 +45,60 @@ func recvMsgOnBus(nnbus *nn.Socket) {
 	fmt.Printf("[pid %d] gozbus server: I heard: '%s'.\n", pid, heardBuf)
 }
 
-func sayHello(nnbus *nn.Socket) {
+func sayHello(nnzbus *nn.Socket) {
 	pid := os.Getpid()
 	msg    := "hello from pid " + strconv.Itoa(pid)
 	
-	nnbus.Send([]byte(msg), 0)
+	nnzbus.Send([]byte(msg), 0)
 	fmt.Printf("[pid %d] gozbus client: sayHello sent msg '%s'.\n", pid, msg)
 }
 
+func sendZDate(nnzbus *nn.Socket) {
+
+    // Create Zdate and Write to nnzbus.
+	//
+	// Z is our universal type, a discriminated union.
+	// Hence Z provides run-time type identification
+	// for all message types defined in zbus.capnp
+	//
+	s := capn.NewBuffer(nil)
+	z := gozbus.NewRootZ(s)
+	d := gozbus.NewRootZdate(s)
+	z.SetZdate(d)
+
+	d.SetYear(2004)
+	d.SetMonth(12)
+	d.SetDay(7)
+
+	buf := bytes.Buffer{}
+	s.WriteTo(&buf)
+
+	nnzbus.Send(buf.Bytes(), 0)
+}
+
+func recvZDate(nnzbus *nn.Socket) {
+
+    // Read a Z message that is expected to be a Zdate from nnzbus
+	myMsg, err := nnzbus.Recv(0)
+	if err != nil { log.Fatal(err) }
+
+	buf := bytes.NewBuffer(myMsg)
+	capMsg, err := capn.ReadFromStream(buf, nil)
+	if err != nil { log.Fatal(err) }
+
+	z := gozbus.ReadRootZ(capMsg)
+	mydate := z.Zdate()
+
+	fmt.Printf("[pid %d] recvZDate got ZDate message: year %d, month %d, day %d\n", 
+		os.Getpid(), mydate.Year(), mydate.Month(), mydate.Day())
+}
 
 func main() {
 	var err error
-	var nnbus *nn.Socket
+	var nnzbus *nn.Socket
 	pid := os.Getpid()
 
-	nnbus, err = nn.NewSocket(nn.AF_SP, nn.PAIR)
+	nnzbus, err = nn.NewSocket(nn.AF_SP, nn.PAIR)
 	if err != nil { log.Fatal(err) }
 
 	var isServer bool = false
@@ -67,16 +108,16 @@ func main() {
 
 	if isServer {
 		// server code, binds the bus to start it.
-		startBus(nnbus)
-		recvMsgOnBus(nnbus)
+		startZBus(nnzbus)
+		recvMsgOnZBus(nnzbus)
 
 	} else {
 		// client code, connects to the bus.
-		if _, err = nnbus.Connect(BUS_ADDR); err != nil {
+		if _, err = nnzbus.Connect(ZBUS_ADDR); err != nil {
 			log.Fatal(err)
 		}
 
-		sayHello(nnbus)
+		sayHello(nnzbus)
 	}
 
 	// wait 2 minutes
