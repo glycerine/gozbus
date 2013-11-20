@@ -26,7 +26,7 @@ func startZBus(nnzbus *nn.Socket) {
 
     _, err := nnzbus.Bind(ZBUS_ADDR)
 	if err != nil {
-		fmt.Printf("zbus already started?; proceeding.\n")
+		log.Fatal(err)
 	}
 	fmt.Printf("[pid %d] gozbus server: startZbus bound endpoint '%s'.\n", os.Getpid(), ZBUS_ADDR)
 }
