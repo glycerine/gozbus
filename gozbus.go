@@ -22,9 +22,9 @@ import (
 const ZBUS_ADDR = "tcp://127.0.0.1:1776"
 
 
-func startZBus(nnzbus *nn.Socket) {
+func startZBus(nnzbus *nn.Socket, addr string) {
 
-    _, err := nnzbus.Bind(ZBUS_ADDR)
+    _, err := nnzbus.Bind(addr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -110,7 +110,7 @@ func main() {
 
 	if isServer {
 		// server code, binds the bus to start it.
-		startZBus(nnzbus)
+		startZBus(nnzbus, ZBUS_ADDR)
 		recvMsgOnZBus(nnzbus)
 		sendZDate(nnzbus)
 
