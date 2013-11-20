@@ -43,9 +43,19 @@ func ServerBindHelper(t *testing.T, addr_use string, addr_expect string) {
 
 	startZBus(nnzbus, addr_use)
 
-	// To test the test, for example, expect failure if we gave a wrong address here:
-    // startZBus(nnzbus, "tcp://127.0.0.1:1777")
-	
+	found := PortIsListenedOn(t, addr_expect)
+
+	if !found { 
+		t.Logf("gozbus server was not listening on %v as expected", addr_expect) 
+		panic("no gozbus server at expected endpoint")
+	}
+}
+
+func PortIsListenedOn(t *testing.T, addr_expect string) bool {
+	// Equivalent to: $(netstat -nuptl| grep <ip:port> | grep LISTEN).
+    // Input addr_expect: is of the form "tcp://127.0.0.1:1777"
+	// and we discard everyting before the // to get ip:port.
+
 	out, err := exec.Command("netstat", "-nuptl").Output()
 	if err != nil { t.Fatal(err) }
 	
@@ -64,11 +74,7 @@ func ServerBindHelper(t *testing.T, addr_use string, addr_expect string) {
 			break
 		}
 	}
-
-	if !found { 
-		t.Logf("gozbus server was not listening on %v as expected", addr_expect) 
-		panic("no gozbus server at expected endpoint")
-	}
+	return found
 }
 
 // client should be able to send to live server
