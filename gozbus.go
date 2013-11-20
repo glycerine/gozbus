@@ -124,6 +124,5 @@ func main() {
 		recvZDate(nnzbus)
 	}
 
-	// wait 2 minutes
 	fmt.Printf("[pid %d] done.\n", pid)
 }
