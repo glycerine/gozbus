@@ -9,4 +9,4 @@ gozbus: gozbus.go zbus/zbus.capnp
 	go build -gcflags "-N -l" gozbus.go
 
 clean:
-	rm -f *~ zbus.capnp.go gozbus
+	rm -f *~ zbus/zbus.capnp.go gozbus
