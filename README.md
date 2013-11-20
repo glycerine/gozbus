@@ -26,7 +26,8 @@ Cap'n Proto is the successor to ProtocolBuffers, and
 provides highly efficient encoding
 and decoding of messages based on a strongly typed schema
 language. Capnp bindings are available for Golang, 
-C++, and Python.
+C++, and Python. We use the schema handling portion only,
+as the RPC part of Cap'n Proto isn't available at this time.
 
 [1] nanomsg: http://nanomsg.org/
 
