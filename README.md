@@ -33,6 +33,8 @@ as the RPC part of Cap'n Proto isn't available at this time.
 
 [2] Cap'n Proto: http://kentonv.github.io/capnproto/
 
+These two pre-requisite libraries should be downloaded and installed
+prior to building gozbus.
 
 build notes
 -----------
