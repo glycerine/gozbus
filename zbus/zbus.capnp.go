@@ -3,7 +3,7 @@ package gozbus
 // AUTO GENERATED - DO NOT EDIT
 
 import (
-	C "github.com/jmckaskill/go-capnproto"
+	C "github.com/glycerine/go-capnproto"
 	"math"
 	"unsafe"
 )
@@ -22,6 +22,9 @@ func (s Zdate) SetDay(v uint8)         { C.Struct(s).Set8(3, v) }
 func (s Zdate) Tjday() uint32          { return C.Struct(s).Get32(4) }
 func (s Zdate) SetTjday(v uint32)      { C.Struct(s).Set32(4, v) }
 
+// capn.JSON_enabled == false so we stub MarshallJSON until List(List(Z)) support is fixed
+func (s Zdate) MarshalJSON() (bs []byte, err error) { return }
+
 type Zdate_List C.PointerList
 
 func NewZdateList(s *C.Segment, sz int) Zdate_List { return Zdate_List(s.NewUInt64List(sz)) }
@@ -38,6 +41,9 @@ func (s Ztm) TmMsecMidnt() uint32            { return C.Struct(s).Get32(0) }
 func (s Ztm) SetTmMsecMidnt(v uint32)        { C.Struct(s).Set32(0, v) }
 func (s Ztm) TmNanoSinceLastSec() uint32     { return C.Struct(s).Get32(4) }
 func (s Ztm) SetTmNanoSinceLastSec(v uint32) { C.Struct(s).Set32(4, v) }
+
+// capn.JSON_enabled == false so we stub MarshallJSON until List(List(Z)) support is fixed
+func (s Ztm) MarshalJSON() (bs []byte, err error) { return }
 
 type Ztm_List C.PointerList
 
@@ -56,6 +62,9 @@ func (s Ztd) SetDate(v Zdate)      { C.Struct(s).SetObject(0, C.Object(v)) }
 func (s Ztd) Time() Ztm            { return Ztm(C.Struct(s).GetObject(1).ToStruct()) }
 func (s Ztd) SetTime(v Ztm)        { C.Struct(s).SetObject(1, C.Object(v)) }
 
+// capn.JSON_enabled == false so we stub MarshallJSON until List(List(Z)) support is fixed
+func (s Ztd) MarshalJSON() (bs []byte, err error) { return }
+
 type Ztd_List C.PointerList
 
 func NewZtdList(s *C.Segment, sz int) Ztd_List { return Ztd_List(s.NewCompositeList(0, 2, sz)) }
@@ -64,10 +73,10 @@ func (s Ztd_List) At(i int) Ztd                { return Ztd(C.PointerList(s).At(
 func (s Ztd_List) ToArray() []Ztd              { return *(*[]Ztd)(unsafe.Pointer(C.PointerList(s).ToArray())) }
 
 type Z C.Struct
-type Z_which uint16
+type Z_Which uint16
 
 const (
-	Z_VOID    Z_which = 0
+	Z_VOID    Z_Which = 0
 	Z_ZZ              = 1
 	Z_F64             = 2
 	Z_F32             = 3
@@ -102,7 +111,7 @@ const (
 func NewZ(s *C.Segment) Z             { return Z(s.NewStruct(16, 1)) }
 func NewRootZ(s *C.Segment) Z         { return Z(s.NewRootStruct(16, 1)) }
 func ReadRootZ(s *C.Segment) Z        { return Z(s.Root(0).ToStruct()) }
-func (s Z) Which() Z_which            { return Z_which(C.Struct(s).Get16(0)) }
+func (s Z) Which() Z_Which            { return Z_Which(C.Struct(s).Get16(0)) }
 func (s Z) Zz() Z                     { return Z(C.Struct(s).GetObject(0).ToStruct()) }
 func (s Z) SetZz(v Z)                 { C.Struct(s).Set16(0, 1); C.Struct(s).SetObject(0, C.Object(v)) }
 func (s Z) F64() float64              { return math.Float64frombits(C.Struct(s).Get64(8)) }
@@ -164,6 +173,9 @@ func (s Z) Ztm() Ztm         { return Ztm(C.Struct(s).GetObject(0).ToStruct()) }
 func (s Z) SetZtm(v Ztm)     { C.Struct(s).Set16(0, 28); C.Struct(s).SetObject(0, C.Object(v)) }
 func (s Z) Ztd() Ztd         { return Ztd(C.Struct(s).GetObject(0).ToStruct()) }
 func (s Z) SetZtd(v Ztd)     { C.Struct(s).Set16(0, 29); C.Struct(s).SetObject(0, C.Object(v)) }
+
+// capn.JSON_enabled == false so we stub MarshallJSON until List(List(Z)) support is fixed
+func (s Z) MarshalJSON() (bs []byte, err error) { return }
 
 type Z_List C.PointerList
 
